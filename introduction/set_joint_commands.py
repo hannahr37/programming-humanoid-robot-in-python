@@ -12,6 +12,7 @@ In this exercise you need to know how to set joint commands.
 # add PYTHONPATH
 import os
 import sys
+from time import sleep
 sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'software_installation'))
 
 from spark_agent import SparkAgent
@@ -19,7 +20,12 @@ from spark_agent import SparkAgent
 
 class MyAgent(SparkAgent):
     def think(self, perception):
+        sleep(3)
         action = super(MyAgent, self).think(perception)
+        action.stiffness['LShoulderPitch'] = 0
+        print("stiffness: " + str(action.stiffness))
+        action.speed['HeadYaw'] = 0.1
+        print("speed: " + str(action.speed))
         # YOUR CODE HERE
 
         return action

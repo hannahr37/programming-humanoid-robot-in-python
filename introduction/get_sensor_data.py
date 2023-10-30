@@ -10,6 +10,7 @@ In this exercise you need to know how to get sensor data.
 # add PYTHONPATH
 import os
 import sys
+from time import sleep
 sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'software_installation'))
 
 from spark_agent import SparkAgent
@@ -17,8 +18,13 @@ from spark_agent import SparkAgent
 
 class MyAgent(SparkAgent):
     def think(self, perception):
-        angle = 0
-        temperature = 0
+        sleep(3)
+        #print(self.perception.__dict__)
+        #print(self.perception.joint_temperature['HeadYaw'])
+        #self.perception.joint_temperature['HeadYaw'] -= 1
+        
+        angle = self.perception.joint['HeadYaw']
+        temperature = self.perception.joint_temperature['HeadYaw']
         # YOUR CODE HERE
         # get angle and temperature to current data of joint HeadYaw
 
