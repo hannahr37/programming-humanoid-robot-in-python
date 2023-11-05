@@ -20,14 +20,15 @@ from spark_agent import SparkAgent
 
 class MyAgent(SparkAgent):
     def think(self, perception):
-        sleep(3)
+        #sleep(3)
         action = super(MyAgent, self).think(perception)
+
+        # YOUR CODE HERE
         action.stiffness['LShoulderPitch'] = 0
         print("stiffness: " + str(action.stiffness))
         action.speed['HeadYaw'] = 0.1
         print("speed: " + str(action.speed))
-        # YOUR CODE HERE
-
+        
         return action
 
 if '__main__' == __name__:
