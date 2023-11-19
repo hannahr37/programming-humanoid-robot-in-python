@@ -7,6 +7,7 @@
 
 
 from recognize_posture import PostureRecognitionAgent
+from keyframes import *
 
 
 class StandingUpAgent(PostureRecognitionAgent):
@@ -17,8 +18,21 @@ class StandingUpAgent(PostureRecognitionAgent):
     def standing_up(self):
         posture = self.posture
         # YOUR CODE HERE
+        agent = PostureRecognitionAgent()
+        if posture == 'Back':
+            agent.keyframes = leftBackToStand()
+            # Code, der für den Fall 'Back' ausgeführt werden soll
+            print("Back")
+        elif posture == 'Belly':
+            agent.keyframes = leftBellyToStand()
+            # Code, der für den Fall 'Belly' ausgeführt werden soll
+            print("Belly")
+        else:
+            # Code, der für den Fall ausgeführt wird, dass posture weder 'Back' noch 'Belly' ist
+            print("Unknown posture")
+        agent.run()
         print(posture)
-        #erkennen in welcher Position sich der Roboter gerade befindet 
+         
         
 
 

@@ -51,36 +51,13 @@ class AngleInterpolationAgent(PIDAgent):
         for k, v in self.perception.joint.items():
             target_joints[k] = 0.
 
-        print(target_joints)
-        '''
-        for e in range(len(self.perception.joint)):
-            #target_joints[e] = perception.joint[e]
-            j_name= self.perception[e]
-            target_joints[j_name] = 0.
-        
-        
-        #target_joints['HeadPitch'] = 0.25395310615033506
         #print(target_joints)
-        #return target_joints
-        '''
-
-        '''
-        joint_index = 0
-        times_index = 0
-        P1 = [times[joint_index][times_index], keys[joint_index][times_index][0]]
-        P2 = [times[joint_index][times_index]+ keys [joint_index][times_index][2][1], keys[joint_index][times_index][0]+ keys[joint_index][times_index][2][2]]
-        P3 = [times[joint_index][times_index+1] + keys [joint_index][times_index+1][1][1], keys[joint_index][times_index+1][0]+ keys[joint_index][times_index+1][1][2]]
-        P4 = [times[joint_index][times_index+1], keys[joint_index][times_index+1][0]]
-        print(P1)
-        print(P2)
-        print(P3)
-        print(P4)
-        '''
+        
         now = self.perception.time
         duration = max(max(times))
         
         dt = now % duration
-        print(dt)
+        #print(dt)
         for joint_index in range(len(names)):
             joint_name = names[joint_index]
             joint_times = times[joint_index]
@@ -95,7 +72,7 @@ class AngleInterpolationAgent(PIDAgent):
                     continue
                 #print(joint_times[times_index])
                 if (joint_times[times_index]) <= dt <= (joint_times[times_index+1]):
-                    print("j")
+                    #print("j")
 
                 
                     P0 = [joint_times[times_index], joint_keys[times_index][0]]
@@ -107,8 +84,8 @@ class AngleInterpolationAgent(PIDAgent):
                     interpolated_angles = self.bezier_interpolation2(t, P0, P1, P2, P3)
 
                     target_joints[joint_name] = interpolated_angles    
-                    print(str(joint_name) + str(target_joints[joint_name]))
-        print(target_joints)
+                    #print(str(joint_name) + str(target_joints[joint_name]))
+        #print(target_joints)
 
                 
         return target_joints
