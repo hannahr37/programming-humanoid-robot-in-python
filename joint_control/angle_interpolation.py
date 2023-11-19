@@ -20,8 +20,12 @@
 '''
 
 
+from time import sleep
+
+import numpy as np
 from pid import PIDAgent
 from keyframes import hello
+import bezier 
 
 
 class AngleInterpolationAgent(PIDAgent):
@@ -42,8 +46,83 @@ class AngleInterpolationAgent(PIDAgent):
     def angle_interpolation(self, keyframes, perception):
         target_joints = {}
         # YOUR CODE HERE
+        names, times, keys = keyframes
+        
+        for k, v in self.perception.joint.items():
+            target_joints[k] = 0.
 
+        print(target_joints)
+        '''
+        for e in range(len(self.perception.joint)):
+            #target_joints[e] = perception.joint[e]
+            j_name= self.perception[e]
+            target_joints[j_name] = 0.
+        
+        
+        #target_joints['HeadPitch'] = 0.25395310615033506
+        #print(target_joints)
+        #return target_joints
+        '''
+
+        '''
+        joint_index = 0
+        times_index = 0
+        P1 = [times[joint_index][times_index], keys[joint_index][times_index][0]]
+        P2 = [times[joint_index][times_index]+ keys [joint_index][times_index][2][1], keys[joint_index][times_index][0]+ keys[joint_index][times_index][2][2]]
+        P3 = [times[joint_index][times_index+1] + keys [joint_index][times_index+1][1][1], keys[joint_index][times_index+1][0]+ keys[joint_index][times_index+1][1][2]]
+        P4 = [times[joint_index][times_index+1], keys[joint_index][times_index+1][0]]
+        print(P1)
+        print(P2)
+        print(P3)
+        print(P4)
+        '''
+        now = self.perception.time
+        duration = max(max(times))
+        
+        dt = now % duration
+        print(dt)
+        for joint_index in range(len(names)):
+            joint_name = names[joint_index]
+            joint_times = times[joint_index]
+            joint_keys = keys[joint_index]
+
+            for times_index in range(len(joint_times)):
+                #print(times_index)
+                #print(len(joint_times))
+
+                if len(joint_times) <= times_index +1:
+                    #print("weiter")
+                    continue
+                #print(joint_times[times_index])
+                if (joint_times[times_index]) <= dt <= (joint_times[times_index+1]):
+                    print("j")
+
+                
+                    P0 = [joint_times[times_index], joint_keys[times_index][0]]
+                    P1 = [joint_times[times_index]+ joint_keys[times_index][2][1], joint_keys[times_index][0]+ joint_keys[times_index][2][2]]
+                    P2 = [joint_times[times_index+1] + joint_keys[times_index+1][1][1], joint_keys[times_index+1][0]+ joint_keys[times_index+1][1][2]]
+                    P3 = [joint_times[times_index+1], joint_keys[times_index+1][0]]
+
+                    t = (dt - joint_times[times_index])/(joint_times[times_index+1]-joint_times[times_index])
+                    interpolated_angles = self.bezier_interpolation2(t, P0, P1, P2, P3)
+
+                    target_joints[joint_name] = interpolated_angles    
+                    print(str(joint_name) + str(target_joints[joint_name]))
+        print(target_joints)
+
+                
         return target_joints
+    
+    def bezier_interpolation2(self, i, P0, P1, P2, P3):
+        # Cubic Bezier interpolation formula
+        return ((1 - i)**3 * P0[1] + 3 * (1 - i)**2 * i * P1[1] + 3 * (1 - i) * i**2 * P2[1] + i**3 * P3[1])
+        
+    def bezier_interpolation(self, i, P0, P1, P2, P3):
+        # Cubic Bezier interpolation formula
+        return [
+            (1 - i)**3 * P0[0] + 3 * (1 - i)**2 * i * P1[0] + 3 * (1 - i) * i**2 * P2[0] + i**3 * P3[0],
+            (1 - i)**3 * P0[1] + 3 * (1 - i)**2 * i * P1[1] + 3 * (1 - i) * i**2 * P2[1] + i**3 * P3[1]
+        ]
 
 if __name__ == '__main__':
     agent = AngleInterpolationAgent()

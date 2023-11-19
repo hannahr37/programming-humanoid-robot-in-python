@@ -6,6 +6,7 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+joint_control/robot_pose_data
 .Python
 env/
 build/
