@@ -37,6 +37,7 @@ class PostureRecognitionAgent(AngleInterpolationAgent):
     def recognize_posture(self, perception):
         posture = 'unknown'
         # YOUR CODE HERE
+        '''
         data= []
         
         print(type(perception))
@@ -47,6 +48,7 @@ class PostureRecognitionAgent(AngleInterpolationAgent):
         data = np.array(data)
         posture = pclf.predict(data[-1].reshape(1, -1))
         #print(perception.__dict__)
+        '''
         
         return posture
 

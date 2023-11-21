@@ -18,7 +18,7 @@ class StandingUpAgent(PostureRecognitionAgent):
     def standing_up(self):
         posture = self.posture
         # YOUR CODE HERE
-        agent = PostureRecognitionAgent()
+        '''agent = PostureRecognitionAgent()
         if posture == 'Back':
             agent.keyframes = leftBackToStand()
             # Code, der für den Fall 'Back' ausgeführt werden soll
@@ -32,7 +32,7 @@ class StandingUpAgent(PostureRecognitionAgent):
             print("Unknown posture")
         agent.run()
         print(posture)
-         
+         '''
         
 
 

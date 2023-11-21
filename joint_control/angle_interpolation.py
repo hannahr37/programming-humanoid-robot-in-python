@@ -23,9 +23,10 @@
 from time import sleep
 
 import numpy as np
+
 from pid import PIDAgent
-from keyframes import hello
-import bezier 
+from keyframes import *
+
 
 
 class AngleInterpolationAgent(PIDAgent):
@@ -46,6 +47,7 @@ class AngleInterpolationAgent(PIDAgent):
     def angle_interpolation(self, keyframes, perception):
         target_joints = {}
         # YOUR CODE HERE
+        
         names, times, keys = keyframes
         
         for k, v in self.perception.joint.items():
@@ -103,5 +105,5 @@ class AngleInterpolationAgent(PIDAgent):
 
 if __name__ == '__main__':
     agent = AngleInterpolationAgent()
-    agent.keyframes = hello()  # CHANGE DIFFERENT KEYFRAMES
+    agent.keyframes = leftBackToStand()  # CHANGE DIFFERENT KEYFRAMES
     agent.run()
