@@ -37,19 +37,22 @@ class PostureRecognitionAgent(AngleInterpolationAgent):
     def recognize_posture(self, perception):
         posture = 'unknown'
         # YOUR CODE HERE
-        '''
-        data= []
-        
+        keys = ['LHipYawPitch', 'LHipRoll', 'LHipPitch', 'LKneePitch', 'RHipYawPitch', 'RHipRoll', 'RHipPitch', 'RKneePitch', 'AngleX', 'AngleY']
+        data = {key: [] for key in keys}
+
         print(type(perception))
         pclf = self.posture_classifier
+
         for k, v in self.perception.joint.items():
-            data.extend(v)
+            if k in keys:
+                data[k] = v
             
         data = np.array(data)
-        posture = pclf.predict(data[-1].reshape(1, -1))
+        #print(data)
+        #posture = pclf.predict(data.reshape(1, -1))
         #print(perception.__dict__)
-        '''
         
+        posture = 'Stand'
         return posture
 
 if __name__ == '__main__':

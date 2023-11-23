@@ -19,6 +19,7 @@
 # add PYTHONPATH
 import os
 import sys
+import numpy as np
 sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'joint_control'))
 
 from numpy.matlib import matrix, identity
@@ -36,7 +37,12 @@ class ForwardKinematicsAgent(PostureRecognitionAgent):
         self.transforms = {n: identity(4) for n in self.joint_names}
 
         # chains defines the name of chain and joints of the chain
-        self.chains = {'Head': ['HeadYaw', 'HeadPitch']
+        self.chains = {'Head': ['HeadYaw', 'HeadPitch'],
+                       'LArm': ['LShoulderPitch', 'LShoulderRoll', 'LElbowYaw', 'LElbowRoll'], #, 'LWristYaw2', 'LHand2'
+                       'LLeg': ['LHipYawPitch', 'LHipRoll', 'LHipPitch', 'LKneePitch', 'LAnklePitch', 'LAnkleRoll'],
+                       'RLeg': ['RHipYawPitch', 'RHipRoll', 'RHipPitch', 'RKneePitch', 'RAnklePitch', 'RAnkleRoll'],
+                       'RArm': ['RShoulderPitch', 'RShoulderRoll', 'RElbowYaw', 'RElbowRoll'], #, 'RWristYaw2', 'RHand2'
+                       #'Torso': ['Head', 'LArm', 'LLeg', 'RLeg', 'RArm'] #?
                        # YOUR CODE HERE
                        }
 
@@ -54,6 +60,66 @@ class ForwardKinematicsAgent(PostureRecognitionAgent):
         '''
         T = identity(4)
         # YOUR CODE HERE
+        '''
+        
+        theta = joint_angle
+        axis = axis / np.linalg.norm(axis)
+        cos_theta = np.cos(theta)
+        sin_theta = np.sin(theta)
+        cross_product_matrix = np.array([
+                [0, -axis[2], axis[1], 0],
+                [axis[2], 0, -axis[0], 0],
+                [-axis[1], axis[0], 0, 0],
+                [0, 0, 0, 1]
+            ])
+        rotation_matrix = cos_theta * np.identity(4) + (1 - cos_theta) * np.outer(axis, axis) + sin_theta * cross_product_matrix
+        
+    
+        if "Roll" in joint_name:
+            T = rotation_matrix(np.array([1, 0, 0]), theta)
+            print("roll")
+            
+        if "Pitch" in joint_name:
+            T = rotation_matrix(np.array([0, 1, 0]), theta)
+            print("Pitch")
+            
+        if "Yaw" in joint_name:
+            T = rotation_matrix(np.array([0, 0, 1]), theta)
+            print("Yaw")
+
+        '''
+        theta = joint_angle
+        cos_theta = np.cos(theta)
+        sin_theta = np.sin(theta)
+
+        if "Roll" in joint_name:
+            T = np.array([
+            [1, 0, 0, 0],
+            [0, cos_theta, sin_theta, 0],
+            [0, sin_theta, cos_theta, 0],
+            [0, 0, 0, 1]
+            ])
+            #print("Roll")
+            
+        elif "Pitch" in joint_name:
+            T = np.array([
+            [cos_theta, 0, sin_theta, 0],
+            [0, 1, 0, 0],
+            [-sin_theta, 0, cos_theta, 0],
+            [0, 0, 0, 1]
+            ])
+            #print("Pitch")
+            
+        elif "Yaw" in joint_name:
+            T = np.array([
+            [cos_theta, sin_theta, 0, 0],
+            [sin_theta, cos_theta, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1]
+            ])
+            #print("Yaw")
+        
+        #print(T)
 
         return T
 
@@ -67,7 +133,11 @@ class ForwardKinematicsAgent(PostureRecognitionAgent):
             for joint in chain_joints:
                 angle = joints[joint]
                 Tl = self.local_trans(joint, angle)
+                #print("Tl" + str(Tl))
                 # YOUR CODE HERE
+                T = np.dot(T, Tl)
+                #print("T")
+                #print (T)
 
                 self.transforms[joint] = T
 

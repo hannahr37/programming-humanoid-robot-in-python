@@ -56,9 +56,14 @@ class AngleInterpolationAgent(PIDAgent):
         #print(target_joints)
         
         now = self.perception.time
-        duration = max(max(times))
+        if times:
+            duration = max(max(times))
+            dt = now % duration
+        else:
+            duration = 0
+            dt = now
         
-        dt = now % duration
+        
         #print(dt)
         for joint_index in range(len(names)):
             joint_name = names[joint_index]
