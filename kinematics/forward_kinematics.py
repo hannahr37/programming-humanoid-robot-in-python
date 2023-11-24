@@ -60,37 +60,13 @@ class ForwardKinematicsAgent(PostureRecognitionAgent):
         '''
         T = identity(4)
         # YOUR CODE HERE
-        '''
+        #what about joint HipYawPitch
         
-        theta = joint_angle
-        axis = axis / np.linalg.norm(axis)
-        cos_theta = np.cos(theta)
-        sin_theta = np.sin(theta)
-        cross_product_matrix = np.array([
-                [0, -axis[2], axis[1], 0],
-                [axis[2], 0, -axis[0], 0],
-                [-axis[1], axis[0], 0, 0],
-                [0, 0, 0, 1]
-            ])
-        rotation_matrix = cos_theta * np.identity(4) + (1 - cos_theta) * np.outer(axis, axis) + sin_theta * cross_product_matrix
-        
-    
-        if "Roll" in joint_name:
-            T = rotation_matrix(np.array([1, 0, 0]), theta)
-            print("roll")
-            
-        if "Pitch" in joint_name:
-            T = rotation_matrix(np.array([0, 1, 0]), theta)
-            print("Pitch")
-            
-        if "Yaw" in joint_name:
-            T = rotation_matrix(np.array([0, 0, 1]), theta)
-            print("Yaw")
-
-        '''
         theta = joint_angle
         cos_theta = np.cos(theta)
         sin_theta = np.sin(theta)
+        #if "YawPitch" in joint_name:
+            #print(str(joint_name) + str(joint_angle))
 
         if "Roll" in joint_name:
             T = np.array([
@@ -101,6 +77,14 @@ class ForwardKinematicsAgent(PostureRecognitionAgent):
             ])
             #print("Roll")
             
+        elif "Yaw" in joint_name:
+            T = np.array([
+            [cos_theta, sin_theta, 0, 0],
+            [sin_theta, cos_theta, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1]
+            ])
+            #print("Yaw")
         elif "Pitch" in joint_name:
             T = np.array([
             [cos_theta, 0, sin_theta, 0],
@@ -110,14 +94,7 @@ class ForwardKinematicsAgent(PostureRecognitionAgent):
             ])
             #print("Pitch")
             
-        elif "Yaw" in joint_name:
-            T = np.array([
-            [cos_theta, sin_theta, 0, 0],
-            [sin_theta, cos_theta, 0, 0],
-            [0, 0, 1, 0],
-            [0, 0, 0, 1]
-            ])
-            #print("Yaw")
+        
         
         #print(T)
 

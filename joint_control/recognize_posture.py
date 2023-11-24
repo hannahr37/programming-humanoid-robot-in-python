@@ -40,7 +40,7 @@ class PostureRecognitionAgent(AngleInterpolationAgent):
         keys = ['LHipYawPitch', 'LHipRoll', 'LHipPitch', 'LKneePitch', 'RHipYawPitch', 'RHipRoll', 'RHipPitch', 'RKneePitch', 'AngleX', 'AngleY']
         data = {key: [] for key in keys}
 
-        print(type(perception))
+        #print(type(perception))
         pclf = self.posture_classifier
 
         for k, v in self.perception.joint.items():

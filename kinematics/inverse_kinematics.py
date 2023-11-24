@@ -154,13 +154,14 @@ class InverseKinematicsAgent(ForwardKinematicsAgent):
         if "LLeg" in effector_name:
             names = ['LHipYawPitch', 'LHipRoll', 'LHipPitch', 'LKneePitch', 'LAnklePitch', 'LAnkleRoll']
         elif "RLeg" in effector_name:
-            names = ['LHipYawPitch', 'LHipRoll', 'LHipPitch', 'LKneePitch', 'LAnklePitch', 'LAnkleRoll']
+            names = ['RHipYawPitch', 'RHipRoll', 'RHipPitch', 'RKneePitch', 'RAnklePitch', 'RAnkleRoll']
         angles = []
         for e in self.inverse_kinematics(effector_name, transform):
             angles.append([e])
 
         #self.keyframes = ([], [], [])  # the result joint angles have to fill in
-        self.keyframes = (names, [], angles)
+        times = [[1.5], [2.0], [2.5], [3.0], [3.5], [4.0]]
+        self.keyframes = (names, times, angles)
         print(self.keyframes)
 
 if __name__ == '__main__':

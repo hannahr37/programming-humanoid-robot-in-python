@@ -7,6 +7,10 @@
 '''
 
 import weakref
+from jsonrpcclient import request
+import sys
+sys.path.append('/programming-humanoid-robot-in-python/joint_control/keyframes')
+#from keyframes import *
 
 class PostHandler(object):
     '''the post hander wraps function to be excuted in paralle
@@ -33,34 +37,56 @@ class ClientAgent(object):
     def get_angle(self, joint_name):
         '''get sensor value of given joint'''
         # YOUR CODE HERE
+        response = request("http://localhost:8000", "get_angle", joint_name)
+        return response
     
     def set_angle(self, joint_name, angle):
         '''set target angle of joint for PID controller
         '''
         # YOUR CODE HERE
+        response = request("http://localhost:8000", "set_angle", joint_name=joint_name, angle=angle)
+        return response.data.result
 
     def get_posture(self):
         '''return current posture of robot'''
         # YOUR CODE HERE
+        response = request("http://localhost:8000", "get_posture")
+        return response.data.result
 
     def execute_keyframes(self, keyframes):
         '''excute keyframes, note this function is blocking call,
         e.g. return until keyframes are executed
         '''
         # YOUR CODE HERE
+        response = request("http://localhost:8000", "execute_keyframes", keyframes=keyframes)
+        return response.data.result
 
     def get_transform(self, name):
         '''get transform with given name
         '''
         # YOUR CODE HERE
+        response = request("http://localhost:8000", "get_transform", name=name)
+        return response.data.result
 
     def set_transform(self, effector_name, transform):
         '''solve the inverse kinematics and control joints use the results
         '''
         # YOUR CODE HERE
+        response = request("http://localhost:8000", "set_transform", effector_name=effector_name, transform=transform)
+        return response.data.result
 
 if __name__ == '__main__':
     agent = ClientAgent()
+
     # TEST CODE HERE
+    joint_name = "HeadYaw"
+    angle = 45.0
+    print(agent.get_angle(joint_name))
+    '''
+    print(agent.set_angle(joint_name, angle))
+
+    keyframes = hello()  # Provide the actual keyframes
+    print(agent.execute_keyframes(keyframes))
+    '''
 
 
