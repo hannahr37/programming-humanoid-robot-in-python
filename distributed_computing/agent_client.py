@@ -7,6 +7,8 @@
 '''
 
 import weakref
+
+import jsonrpcclient
 from jsonrpcclient import request
 import sys
 sys.path.append('/programming-humanoid-robot-in-python/joint_control/keyframes')
@@ -33,25 +35,25 @@ class ClientAgent(object):
     # YOUR CODE HERE
     def __init__(self):
         self.post = PostHandler(self)
-    
+
     def get_angle(self, joint_name):
         '''get sensor value of given joint'''
         # YOUR CODE HERE
         response = request("http://localhost:8000", "get_angle", joint_name)
         return response
-    
+
     def set_angle(self, joint_name, angle):
         '''set target angle of joint for PID controller
         '''
         # YOUR CODE HERE
         response = request("http://localhost:8000", "set_angle", joint_name=joint_name, angle=angle)
-        return response.data.result
+        return response
 
     def get_posture(self):
         '''return current posture of robot'''
         # YOUR CODE HERE
         response = request("http://localhost:8000", "get_posture")
-        return response.data.result
+        return response
 
     def execute_keyframes(self, keyframes):
         '''excute keyframes, note this function is blocking call,
@@ -59,21 +61,21 @@ class ClientAgent(object):
         '''
         # YOUR CODE HERE
         response = request("http://localhost:8000", "execute_keyframes", keyframes=keyframes)
-        return response.data.result
+        return response
 
     def get_transform(self, name):
         '''get transform with given name
         '''
         # YOUR CODE HERE
         response = request("http://localhost:8000", "get_transform", name=name)
-        return response.data.result
+        return response
 
     def set_transform(self, effector_name, transform):
         '''solve the inverse kinematics and control joints use the results
         '''
         # YOUR CODE HERE
         response = request("http://localhost:8000", "set_transform", effector_name=effector_name, transform=transform)
-        return response.data.result
+        return response
 
 if __name__ == '__main__':
     agent = ClientAgent()
