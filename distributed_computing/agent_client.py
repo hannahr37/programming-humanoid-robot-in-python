@@ -5,13 +5,13 @@
 * The PostHandler can be implement in the last step, it pjsonrpcclientrovides non-blocking functions, e.g. agent.post.execute_keyframes
  * Hints: [threading](https://docs.python.org/2/library/threading.html) may be needed for monitoring if the task is done
 '''
-
+import time
 import weakref
 
 import requests
 import sys
 sys.path.append('/programming-humanoid-robot-in-python/joint_control/keyframes')
-#from keyframes import *
+from joint_control.keyframes import *
 
 class PostHandler(object):
     '''the post hander wraps function to be excuted in paralle
@@ -72,7 +72,9 @@ class ClientAgent(object):
         '''
         # YOUR CODE HERE
         payload = Payload("execute_keyframes",[keyframes])
+        print(time.time())
         response = requests.post(self.url, json=payload.__dict__).json()
+        print(time.time())
         return response
 
     def get_transform(self, name):
@@ -97,8 +99,11 @@ if __name__ == '__main__':
     # TEST CODE HERE
     joint_name = "HeadYaw"
     angle = 45.0
-    print(agent.set_angle(joint_name,180))
+    print("here")
+    print(agent.set_angle(joint_name,45))
     print(agent.get_angle(joint_name))
+    keyframes = hello()  # Provide the actual keyframes
+    print(agent.execute_keyframes(keyframes))
     '''
     print(agent.set_angle(joint_name, angle))
 

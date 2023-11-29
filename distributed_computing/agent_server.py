@@ -14,6 +14,8 @@
 # add PYTHONPATH
 import os
 import sys
+import threading
+
 sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'kinematics'))
 
 from kinematics.inverse_kinematics import InverseKinematicsAgent
@@ -52,9 +54,9 @@ class ServerAgent(InverseKinematicsAgent):
         return posture
 
     def execute_keyframes(self, keyframes):
-        while True:
-            agent.keyframes = keyframes
-        return
+        print(keyframes)
+        agent.keyframes = keyframes
+        return 1
 
     def get_transform(self, name):
         return # noch keinen Code möglichlicherweise:??? self.get_transform(name)
@@ -74,6 +76,14 @@ class ServerAgent(InverseKinematicsAgent):
 
 if __name__ == '__main__':
     agent = ServerAgent()
-    run_simple('localhost', 4002, agent.application)
+    # Starten Sie den Server in einem separaten Thread
+    def run_server():
+        run_simple('localhost', 4002, agent.application)
+
+    # Starten Sie den Server in einem separaten Thread
+    server_thread = threading.Thread(target=run_server)
+    server_thread.start()
+
+    # Starten Sie den Agenten
     agent.run()
 
