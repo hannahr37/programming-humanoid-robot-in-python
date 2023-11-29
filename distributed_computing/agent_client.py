@@ -28,13 +28,11 @@ class PostHandler(object):
         # YOUR CODE HERE
 
 class Payload:
-            method: str
-            params = []
-            jsonrpc = "2.0"
-            id = 0
-class Request:
-        url =  "http://localhost:4002/jsonrpc"
-        payload = Payload()
+    def __init__(self, method:str, params:list):
+        self.method = method
+        self.params = params
+        self.jsonrpc = "2.0"
+        self.id = 0
 
 
 
@@ -42,6 +40,7 @@ class Request:
 class ClientAgent(object):
     '''ClientAgent request RPC service from remote server
     '''
+    url = "http://localhost:4002/jsonrpc"
     # YOUR CODE HERE
     def __init__(self):
         self.post = PostHandler(self)
@@ -49,59 +48,47 @@ class ClientAgent(object):
     def get_angle(self, joint_name):
         '''get sensor value of given joint'''
         # YOUR CODE HERE
-        requestData = Request()
-        requestData.payload.method = "get_angle"
-        requestData.payload.params.append(joint_name)
-        response = requests.post(requestData.url, json=requestData.payload).json()
+        payload = Payload("get_angle",[joint_name])
+        response = requests.post(self.url, json=payload.__dict__).json()
         return response
 
     def set_angle(self, joint_name, angle):
         '''set target angle of joint for PID controller
         '''
         # YOUR CODE HERE
-        requestData = Request()
-        requestData.payload.method = "set_angle"
-        requestData.payload.params.append(joint_name,angle)
-        response = requests.post(requestData.url, json=requestData.payload).json()
+        payload = Payload("set_angle",[joint_name,angle])
+        response = requests.post(self.url, json=payload.__dict__).json()
         return response
 
     def get_posture(self):
         '''return current posture of robot'''
         # YOUR CODE HERE
-        requestData = Request()
-        requestData.payload.method = "get_posture"
-        response = requests.post(requestData.url, json=requestData.payload).json()
+        payload = Payload("get_posture",[])
+        response = requests.post(self.url, json=payload.__dict__).json()
         return response
     def execute_keyframes(self, keyframes):
         '''excute keyframes, note this function is blocking call,
         e.g. return until keyframes are executed
         '''
         # YOUR CODE HERE
-        requestData = Request()
-        requestData.payload.method = "execute_keyframes"
-        requestData.payload.params.append(keyframes)
-        response = requests.post(requestData.url, json=requestData.payload).json()
+        payload = Payload("execute_keyframes",[keyframes])
+        response = requests.post(self.url, json=payload.__dict__).json()
         return response
 
     def get_transform(self, name):
         '''get transform with given name
         '''
         # YOUR CODE HERE
-        requestData = Request()
-        requestData.payload.method = "get_transform"
-        requestData.payload.params.append(name)
-        response = requests.post(requestData.url, json=requestData.payload).json()
+        payload = Payload("get_transform",[name])
+        response = requests.post(self.url, json=payload.__dict__).json()
         return response
 
     def set_transform(self, effector_name, transform):
         '''solve the inverse kinematics and control joints use the results
         '''
         # YOUR CODE HERE
-        requestData = Request()
-        requestData.payload.method = "set_transform"
-        requestData.payload.params.append(effector_name)
-        requestData.payload.params.append(transform)
-        response = requests.post(requestData.url, json=requestData.payload).json()
+        payload = Payload("set_transform",[effector_name,transform])
+        response = requests.post(self.url, json=payload.__dict__).json()
         return response
 
 if __name__ == '__main__':
@@ -110,6 +97,7 @@ if __name__ == '__main__':
     # TEST CODE HERE
     joint_name = "HeadYaw"
     angle = 45.0
+    print(agent.set_angle(joint_name,180))
     print(agent.get_angle(joint_name))
     '''
     print(agent.set_angle(joint_name, angle))
