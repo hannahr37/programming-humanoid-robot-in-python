@@ -8,8 +8,7 @@
 
 import weakref
 
-import jsonrpcclient
-from jsonrpcclient import request
+import requests
 import sys
 sys.path.append('/programming-humanoid-robot-in-python/joint_control/keyframes')
 #from keyframes import *
@@ -28,6 +27,17 @@ class PostHandler(object):
         '''non-blocking call of ClientAgent.set_transform'''
         # YOUR CODE HERE
 
+class Payload:
+            method: str
+            params = []
+            jsonrpc = "2.0"
+            id = 0
+class Request:
+        url =  "http://localhost:4002/jsonrpc"
+        payload = Payload()
+
+
+
 
 class ClientAgent(object):
     '''ClientAgent request RPC service from remote server
@@ -39,42 +49,59 @@ class ClientAgent(object):
     def get_angle(self, joint_name):
         '''get sensor value of given joint'''
         # YOUR CODE HERE
-        response = request("http://localhost:8000", "get_angle", joint_name)
+        requestData = Request()
+        requestData.payload.method = "get_angle"
+        requestData.payload.params.append(joint_name)
+        response = requests.post(requestData.url, json=requestData.payload).json()
         return response
 
     def set_angle(self, joint_name, angle):
         '''set target angle of joint for PID controller
         '''
         # YOUR CODE HERE
-        response = request("http://localhost:8000", "set_angle", joint_name=joint_name, angle=angle)
+        requestData = Request()
+        requestData.payload.method = "set_angle"
+        requestData.payload.params.append(joint_name,angle)
+        response = requests.post(requestData.url, json=requestData.payload).json()
         return response
 
     def get_posture(self):
         '''return current posture of robot'''
         # YOUR CODE HERE
-        response = request("http://localhost:8000", "get_posture")
+        requestData = Request()
+        requestData.payload.method = "get_posture"
+        response = requests.post(requestData.url, json=requestData.payload).json()
         return response
-
     def execute_keyframes(self, keyframes):
         '''excute keyframes, note this function is blocking call,
         e.g. return until keyframes are executed
         '''
         # YOUR CODE HERE
-        response = request("http://localhost:8000", "execute_keyframes", keyframes=keyframes)
+        requestData = Request()
+        requestData.payload.method = "execute_keyframes"
+        requestData.payload.params.append(keyframes)
+        response = requests.post(requestData.url, json=requestData.payload).json()
         return response
 
     def get_transform(self, name):
         '''get transform with given name
         '''
         # YOUR CODE HERE
-        response = request("http://localhost:8000", "get_transform", name=name)
+        requestData = Request()
+        requestData.payload.method = "get_transform"
+        requestData.payload.params.append(name)
+        response = requests.post(requestData.url, json=requestData.payload).json()
         return response
 
     def set_transform(self, effector_name, transform):
         '''solve the inverse kinematics and control joints use the results
         '''
         # YOUR CODE HERE
-        response = request("http://localhost:8000", "set_transform", effector_name=effector_name, transform=transform)
+        requestData = Request()
+        requestData.payload.method = "set_transform"
+        requestData.payload.params.append(effector_name)
+        requestData.payload.params.append(transform)
+        response = requests.post(requestData.url, json=requestData.payload).json()
         return response
 
 if __name__ == '__main__':

@@ -68,6 +68,7 @@ class ServerAgent(InverseKinematicsAgent):
 
     @Request.application
     def application(self, request):
+        print(request.data)
         response = JSONRPCResponseManager.handle(request.data, dispatcher)
         return Response(response.json, mimetype='application/json')
 
