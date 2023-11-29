@@ -14,64 +14,65 @@
 # add PYTHONPATH
 import os
 import sys
-import jsonrpcserver
 sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'kinematics'))
 
 from kinematics.inverse_kinematics import InverseKinematicsAgent
-
+from jsonrpc import JSONRPCResponseManager, dispatcher
+from werkzeug.wrappers import Request, Response
+from werkzeug.serving import run_simple
 
 class ServerAgent(InverseKinematicsAgent):
-    '''ServerAgent provides RPC service
-    '''
-    # YOUR CODE HERE
     def __init__(self):
         super(ServerAgent, self).__init__()
 
+        # Dispatcher is dictionary {<method_name>: callable}
+        dispatcher["get_angle"] = self.get_angle
+        dispatcher["set_angle"] = self.set_angle
+        dispatcher["get_posture"] = self.get_posture
+        dispatcher["execute_keyframes"] = self.execute_keyframes
+        dispatcher["get_transform"] = self.get_transform
+        dispatcher["set_transform"] = self.set_transform
+
     def get_angle(self, joint_name):
-        '''get sensor value of given joint'''
-        # YOUR CODE HERE
-        angle = self.perception.joint[joint_name]
+        try:
+            angle = self.perception.joint[joint_name]
+        except:
+            return "Error"
         return angle
 
-
     def set_angle(self, joint_name, angle):
-        '''set target angle of joint for PID controller
-        '''
-        # YOUR CODE HERE
-        self.perception.joint[joint_name] = angle
+        try:
+            self.perception.joint[joint_name] = angle
+        except:
+            return "Error"
         return
 
     def get_posture(self):
-        '''return current posture of robot'''
-        # YOUR CODE HERE
         posture = self.recognize_posture
         return posture
 
-
     def execute_keyframes(self, keyframes):
-        '''excute keyframes, note this function is blocking call,
-        e.g. return until keyframes are executed
-        '''
-        # YOUR CODE HERE
-        '''while true?'''
         while True:
             agent.keyframes = keyframes
         return
 
     def get_transform(self, name):
-        '''get transform with given name
-        '''
-        # YOUR CODE HERE
+        return # noch keinen Code möglichlicherweise:??? self.get_transform(name)
 
     def set_transform(self, effector_name, transform):
-        '''solve the inverse kinematics and control joints use the results
-        '''
-        # YOUR CODE HERE
-        agent.set_transforms(effector_name, transform)
+        try:
+            agent.set_transforms(effector_name, transform)
+        except:
+            return "Error"
         return
+
+    @Request.application
+    def application(self, request):
+        response = JSONRPCResponseManager.handle(request.data, dispatcher)
+        return Response(response.json, mimetype='application/json')
 
 if __name__ == '__main__':
     agent = ServerAgent()
+    run_simple('localhost', 4002, agent.application)
     agent.run()
-
 
