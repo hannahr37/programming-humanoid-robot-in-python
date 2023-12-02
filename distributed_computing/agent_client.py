@@ -81,10 +81,7 @@ class ClientAgent(object):
         '''
         # YOUR CODE HERE
         payload = Payload("execute_keyframes",[keyframes])
-        print("start keyframes"+ str(str(datetime.datetime.now())))
-
         response = requests.post(self.url, json=payload.__dict__).json()
-        print("fetig keyframes"+str(datetime.datetime.now()))
         return response
 
     def get_transform(self, name):
@@ -105,9 +102,7 @@ class ClientAgent(object):
 
 if __name__ == '__main__':
     agent = ClientAgent()
-    print("bevor THread" + str(datetime.datetime.now()))
     agent.post.execute_keyframes(hello())
-    print("Abfrage 1" + str(datetime.datetime.now()))
 
 
     # TEST CODE HERE
@@ -115,9 +110,7 @@ if __name__ == '__main__':
     angle = 45.0
 
     print(agent.set_angle(joint_name,180))
-    print("Abfrage 2" + str(datetime.datetime.now()))
     print(agent.get_angle(joint_name))
-    print("Fertig Abfrage 2"+str(datetime.datetime.now()))
 
 
     time.sleep(30)
