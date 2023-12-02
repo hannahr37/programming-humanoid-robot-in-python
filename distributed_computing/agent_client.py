@@ -5,7 +5,6 @@
 * The PostHandler can be implement in the last step, it pjsonrpcclientrovides non-blocking functions, e.g. agent.post.execute_keyframes
  * Hints: [threading](https://docs.python.org/2/library/threading.html) may be needed for monitoring if the task is done
 '''
-import datetime
 import threading
 import time
 import weakref

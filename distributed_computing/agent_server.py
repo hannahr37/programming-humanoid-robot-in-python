@@ -24,6 +24,7 @@ from jsonrpc import JSONRPCResponseManager, dispatcher
 from werkzeug.wrappers import Request, Response
 from werkzeug.serving import run_simple
 
+
 class ServerAgent(InverseKinematicsAgent):
     def __init__(self):
         super(ServerAgent, self).__init__()
@@ -47,20 +48,15 @@ class ServerAgent(InverseKinematicsAgent):
             self.perception.joint[joint_name] = angle
         except:
             return "Error"
-        return
+        return "Successful"
 
     def get_posture(self):
         posture = self.recognize_posture
         return posture
 
     def execute_keyframes(self, keyframes):
-        print("start keyfram")
-        time.sleep(10)
         agent.keyframes = keyframes
-        print("bewegung")
-        time.sleep(10)
-        print("endkeyframe")
-        return 1
+        return "Successful"
 
     def get_transform(self, name):
         try:
@@ -73,19 +69,22 @@ class ServerAgent(InverseKinematicsAgent):
             agent.set_transforms(effector_name, transform)
         except:
             return "Error"
-
+        return "Successful"
 
     @Request.application
     def application(self, request):
         response = JSONRPCResponseManager.handle(request.data, dispatcher)
         return Response(response.json, mimetype='application/json')
 
+
 if __name__ == '__main__':
     agent = ServerAgent()
+
+
     def run_server():
         run_simple('localhost', 4002, agent.application)
+
 
     server_thread = threading.Thread(target=run_server).start()
 
     agent.run()
-
