@@ -15,6 +15,7 @@
 import os
 import sys
 import threading
+import time
 
 sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'kinematics'))
 
@@ -27,7 +28,6 @@ class ServerAgent(InverseKinematicsAgent):
     def __init__(self):
         super(ServerAgent, self).__init__()
 
-        # Dispatcher is dictionary {<method_name>: callable}
         dispatcher["get_angle"] = self.get_angle
         dispatcher["set_angle"] = self.set_angle
         dispatcher["get_posture"] = self.get_posture
@@ -54,36 +54,38 @@ class ServerAgent(InverseKinematicsAgent):
         return posture
 
     def execute_keyframes(self, keyframes):
-        print(keyframes)
+        print("start keyfram")
+        time.sleep(10)
         agent.keyframes = keyframes
+        print("bewegung")
+        time.sleep(10)
+        print("endkeyframe")
         return 1
 
     def get_transform(self, name):
-        return # noch keinen Code möglichlicherweise:??? self.get_transform(name)
+        try:
+            return self.transforms[name]
+        except:
+            return "Error"
 
     def set_transform(self, effector_name, transform):
         try:
             agent.set_transforms(effector_name, transform)
         except:
             return "Error"
-        return
+
 
     @Request.application
     def application(self, request):
-        print(request.data)
         response = JSONRPCResponseManager.handle(request.data, dispatcher)
         return Response(response.json, mimetype='application/json')
 
 if __name__ == '__main__':
     agent = ServerAgent()
-    # Starten Sie den Server in einem separaten Thread
     def run_server():
         run_simple('localhost', 4002, agent.application)
 
-    # Starten Sie den Server in einem separaten Thread
-    server_thread = threading.Thread(target=run_server)
-    server_thread.start()
+    server_thread = threading.Thread(target=run_server).start()
 
-    # Starten Sie den Agenten
     agent.run()
 

@@ -5,6 +5,8 @@
 * The PostHandler can be implement in the last step, it pjsonrpcclientrovides non-blocking functions, e.g. agent.post.execute_keyframes
  * Hints: [threading](https://docs.python.org/2/library/threading.html) may be needed for monitoring if the task is done
 '''
+import datetime
+import threading
 import time
 import weakref
 
@@ -22,10 +24,16 @@ class PostHandler(object):
     def execute_keyframes(self, keyframes):
         '''non-blocking call of ClientAgent.execute_keyframes'''
         # YOUR CODE HERE
+        threading.Thread(target=self.proxy.agent.execute_keyframes, args=[keyframes]).start()
+        return
+
 
     def set_transform(self, effector_name, transform):
         '''non-blocking call of ClientAgent.set_transform'''
         # YOUR CODE HERE
+        threading.Thread(target=self.proxy.agent.execute_keyframes, args=[effector_name,transform]).start()
+        return
+
 
 class Payload:
     def __init__(self, method:str, params:list):
@@ -43,6 +51,7 @@ class ClientAgent(object):
     url = "http://localhost:4002/jsonrpc"
     # YOUR CODE HERE
     def __init__(self):
+        self.agent = self
         self.post = PostHandler(self)
 
     def get_angle(self, joint_name):
@@ -72,9 +81,10 @@ class ClientAgent(object):
         '''
         # YOUR CODE HERE
         payload = Payload("execute_keyframes",[keyframes])
-        print(time.time())
+        print("start keyframes"+ str(str(datetime.datetime.now())))
+
         response = requests.post(self.url, json=payload.__dict__).json()
-        print(time.time())
+        print("fetig keyframes"+str(datetime.datetime.now()))
         return response
 
     def get_transform(self, name):
@@ -95,15 +105,22 @@ class ClientAgent(object):
 
 if __name__ == '__main__':
     agent = ClientAgent()
+    print("bevor THread" + str(datetime.datetime.now()))
+    agent.post.execute_keyframes(hello())
+    print("Abfrage 1" + str(datetime.datetime.now()))
+
 
     # TEST CODE HERE
     joint_name = "HeadYaw"
     angle = 45.0
-    print("here")
-    print(agent.set_angle(joint_name,45))
+
+    print(agent.set_angle(joint_name,180))
+    print("Abfrage 2" + str(datetime.datetime.now()))
     print(agent.get_angle(joint_name))
-    keyframes = hello()  # Provide the actual keyframes
-    print(agent.execute_keyframes(keyframes))
+    print("Fertig Abfrage 2"+str(datetime.datetime.now()))
+
+
+    time.sleep(30)
     '''
     print(agent.set_angle(joint_name, angle))
 
